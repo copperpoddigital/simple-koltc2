@@ -1,0 +1,25 @@
+[tool.black]
+# Maximum line length as per technical specifications
+line-length = 80
+
+# Target Python 3.6+ as specified in deployment requirements
+target-version = ["py36"]
+
+# Include all Python files in CLI application source
+include = "src/cli/**/*.py"
+
+# Exclude test files, init files and setup configuration
+exclude = [
+    "src/cli/tests/**/*.py",
+    "src/cli/**/__init__.py",
+    "src/cli/setup.py"
+]
+
+# Enforce consistent string quote style
+skip-string-normalization = false
+
+# Enforce consistent comma usage
+skip-magic-trailing-comma = false
+
+# Disable experimental features for stability
+experimental-string-processing = false
