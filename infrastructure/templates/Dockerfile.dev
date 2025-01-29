@@ -1,0 +1,61 @@
+# Base image with Python runtime
+FROM python:3.6-slim
+
+# Image metadata
+LABEL maintainer="development-team" \
+      environment="development" \
+      application="todo-cli" \
+      version="1.0"
+
+# Build arguments for customization
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG PYTHON_VERSION=3.6
+ARG APP_DIR=/app
+ARG DEBUG_PORT=5678
+
+# Development environment configuration
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    FLASK_ENV=development \
+    FLASK_DEBUG=1 \
+    DEVELOPMENT_MODE=true \
+    PYTEST_ADDOPTS=--color=yes
+
+# Install development tools and utilities
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        procps && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create development user and set permissions
+RUN groupadd -g ${GROUP_ID} developer && \
+    useradd -u ${USER_ID} -g developer -m -s /bin/bash developer && \
+    mkdir -p ${APP_DIR} && \
+    chown developer:developer ${APP_DIR}
+
+# Set working directory
+WORKDIR ${APP_DIR}
+
+# Copy requirements file
+COPY --chown=developer:developer requirements.txt .
+
+# Install Python packages for development
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir \
+        pytest==7.1.1 \
+        pytest-cov==3.0.0 \
+        pylint==2.14.0 \
+        black==22.3.0 \
+        debugpy==1.6.0
+
+# Switch to non-root user
+USER developer
+
+# Expose debug port
+EXPOSE ${DEBUG_PORT}
+
+# Start application with debugging enabled
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "main.py"]
