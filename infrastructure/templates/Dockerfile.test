@@ -1,0 +1,46 @@
+# Base image with Python runtime
+FROM python:3.6-slim
+
+# Image metadata
+LABEL maintainer="DevOps Team" \
+      purpose="testing" \
+      version="1.0"
+
+# Create non-root user and set up directories with proper permissions
+RUN groupadd -r testuser && \
+    useradd -r -g testuser testuser && \
+    mkdir -p /app /app/test-results /app/coverage && \
+    chown -R testuser:testuser /app
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements files
+COPY src/cli/requirements.txt .
+COPY infrastructure/config/test-requirements.txt .
+
+# Install dependencies and test tools
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r test-requirements.txt && \
+    pip install pytest==7.1.1 pytest-cov==3.0.0 pytest-xdist==2.5.0
+
+# Copy application code and tests
+COPY . .
+
+# Set environment variables for test configuration
+ENV PYTHONPATH=/app \
+    PYTEST_INI_PATH=/app/infrastructure/config/pytest.ini \
+    COVERAGE_RC_PATH=/app/infrastructure/config/coverage.rc \
+    TEST_RESULTS_DIR=/app/test-results \
+    COVERAGE_DIR=/app/coverage
+
+# Switch to non-root user for security
+USER testuser
+
+# Default command to run tests with coverage and reporting
+CMD ["pytest", \
+     "--config-file=${PYTEST_INI_PATH}", \
+     "--cov-config=${COVERAGE_RC_PATH}", \
+     "--cov-report=html:${COVERAGE_DIR}", \
+     "--junitxml=${TEST_RESULTS_DIR}/junit.xml", \
+     "-n", "auto"]
