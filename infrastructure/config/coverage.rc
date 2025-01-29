@@ -1,0 +1,87 @@
+[run]
+# Source code directory to measure
+source = src/cli
+
+# Enable branch coverage measurement
+branch = true
+
+# Enable parallel execution for coverage collection
+parallel = true
+
+# Configure multiprocessing support
+concurrency = multiprocessing
+
+# Coverage data file location
+data_file = .coverage
+
+# Dynamic context tracking by test function
+dynamic_context = test_function
+
+[report]
+# Lines to exclude from coverage measurement
+exclude_lines = 
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    pass
+    raise AssertionError
+    class .*\bException\):
+    return NotImplemented
+
+# Ignore coverage errors
+ignore_errors = true
+
+# Files to omit from coverage analysis
+omit = 
+    src/cli/tests/*
+    src/cli/**/__init__.py
+    src/cli/setup.py
+    src/cli/**/conftest.py
+
+# Minimum required coverage percentage
+fail_under = 90
+
+# Show missing lines in report
+show_missing = true
+
+# Skip files with 100% coverage in report
+skip_covered = true
+
+[html]
+# HTML report output directory
+directory = coverage_html
+
+# Show coverage contexts in HTML report
+show_contexts = true
+
+# HTML report title
+title = Simple To-Do List Coverage Report
+
+# Custom CSS file for HTML report
+extra_css = coverage_html.css
+
+# Include all files in HTML report
+skip_covered = false
+
+# Skip empty files in HTML report
+skip_empty = true
+
+[xml]
+# XML report output file
+output = coverage.xml
+
+# Package depth for XML report
+package_depth = 2
+
+[paths]
+# Source code path mappings
+source = 
+    src/cli
+    /workspace/src
+    /ci/workspace/src
+
+# Map source paths for different environments
+mapping = 
+    /workspace/src = src
+    /ci/workspace/src = src
