@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  todo-app:
+    build:
+      context: ../../src/cli
+      dockerfile: ../Dockerfile.dev
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - PYTHON_ENV=development
+      - DEBUG=1
+    volumes:
+      - ../../src/cli:/app:rw
+      - todo-data-dev:/app/data:rw
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+    working_dir: /app
+    command: ["python", "main.py"]
+    restart: unless-stopped
+    mem_limit: 50MB
+    cpus: 0.5
+    networks:
+      - todo-net-dev
+
+volumes:
+  todo-data-dev:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data
+      o: bind
+
+networks:
+  todo-net-dev:
+    driver: bridge
+    internal: false
+    attachable: true
