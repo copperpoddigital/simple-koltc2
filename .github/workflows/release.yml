@@ -1,0 +1,57 @@
+name: Release Pipeline
+
+# Trigger on version tags or manual workflow dispatch
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://pypi.org/p/simple-todo-cli
+    
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2  # v2
+        with:
+          fetch-depth: 0  # Full history for proper versioning
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2  # v2
+        with:
+          python-version: '3.6'
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel twine
+      
+      - name: Build Package
+        run: |
+          # Clean any existing builds
+          rm -rf dist/ build/ *.egg-info
+          # Build source and wheel distributions
+          python setup.py sdist bdist_wheel
+      
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          # Upload all distribution files
+          twine upload dist/*
