@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  todo-app:
+    build:
+      context: ../src/cli
+      dockerfile: ../infrastructure/Dockerfile
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - todo-data:/app/data:rw
+    user: nonroot
+    working_dir: /app
+    command: python main.py
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=10M
+    mem_limit: 50M
+    cpus: 0.5
+    networks:
+      - todo-net
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  todo-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /var/lib/todo-app/data
+      o: bind
+
+networks:
+  todo-net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: todo-net
+      com.docker.network.bridge.enable_icc: "false"
