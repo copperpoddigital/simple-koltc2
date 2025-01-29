@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  todo-app-test:
+    build:
+      context: ../../src/cli
+      dockerfile: ../templates/Dockerfile.test
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - PYTEST_INI_PATH=/app/infrastructure/config/pytest.ini
+      - COVERAGE_RC_PATH=/app/infrastructure/config/coverage.rc
+      - TEST_TIMEOUT=600
+    volumes:
+      - type: bind
+        source: ../../src/cli
+        target: /app/src
+        read_only: true
+      - type: bind
+        source: ../../infrastructure/config
+        target: /app/infrastructure/config
+        read_only: true
+      - type: volume
+        source: test-results
+        target: /app/test-results
+    working_dir: /app
+    command: [
+      "pytest",
+      "--config-file=${PYTEST_INI_PATH}",
+      "--cov",
+      "--cov-config=${COVERAGE_RC_PATH}",
+      "--cov-report=html:/app/test-results/coverage",
+      "--junitxml=/app/test-results/junit.xml"
+    ]
+    user: nonroot
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 50MB
+    cpus: 0.5
+    restart: "no"
+    networks:
+      - todo-test-net
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  test-results:
+    driver: local
+    driver_opts:
+      type: none
+      device: /tmp/todo-test-results
+      o: bind
+
+networks:
+  todo-test-net:
+    driver: bridge
+    internal: true
