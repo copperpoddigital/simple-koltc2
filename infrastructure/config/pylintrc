@@ -1,0 +1,202 @@
+[MASTER]
+# Python version supported by the project
+python-version=3.6
+
+# Files or directories to ignore during analysis
+ignore=CVS,.git,__pycache__,*.pyc,*.pyo,*.pyd,.pytest_cache
+
+# Discover python modules and packages in the file system subtree
+persistent=yes
+
+# Minimum code quality score required to pass (9.0 out of 10.0)
+fail-under=9.0
+
+# Use multiple processes to speed up Pylint (0 means auto)
+jobs=0
+
+# Allow optimization hints
+suggestion-mode=yes
+
+[MESSAGES CONTROL]
+# Disable specific pylint messages/warnings
+disable=
+    C0111,  # missing-docstring
+    C0103,  # invalid-name
+    broad-except,
+    import-error,
+    no-name-in-module
+
+# Enable specific pylint features/checks
+enable=
+    c-extension-no-member,
+    deprecated-pragma,
+    file-ignored,
+    locally-disabled,
+    suppressed-message
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=80
+
+# Regexp for a line that is allowed to be longer than the limit
+ignore-long-lines=^\s*(# )?<?https?://\S+>?$
+
+# Allow the body of an if to be on the same line as the test if there is no else
+single-line-if-stmt=no
+
+# Allow the body of a class to be on the same line as the declaration if body
+single-line-class-stmt=no
+
+# Number of spaces of indent required inside a hanging or continued line
+indent-after-paren=4
+
+# Expected format of line ending
+expected-line-ending-format=LF
+
+[BASIC]
+# Good variable names which should always be accepted
+good-names=
+    i,
+    j,
+    k,
+    ex,
+    Run,
+    _,
+    id,
+    fd,
+    fp
+
+# Bad variable names which should always be refused
+bad-names=
+    foo,
+    bar,
+    baz,
+    toto,
+    tutu,
+    tata,
+    spam,
+    eggs
+
+# Regular expression which should only match function or class names
+name-group=
+
+# Include a hint for the correct naming format with invalid-name
+include-naming-hint=yes
+
+# Naming style for functions
+function-naming-style=snake_case
+
+# Naming style for variables
+variable-naming-style=snake_case
+
+# Naming style for constants
+const-naming-style=UPPER_CASE
+
+# Naming style for classes
+class-naming-style=PascalCase
+
+[REPORTS]
+# Set the output format
+output-format=text
+
+# Put messages in a separate file
+files-output=no
+
+# Tells whether to display a full report or only the messages
+reports=no
+
+# Python expression which should return a note less than 10
+evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+
+# Template used to display messages
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+
+# Activate the evaluation score
+score=yes
+
+[SIMILARITIES]
+# Minimum lines number of a similarity
+min-similarity-lines=4
+
+# Ignore comments when computing similarities
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities
+ignore-imports=yes
+
+[VARIABLES]
+# A regular expression matching the name of dummy variables
+dummy-variables-rgx=_$|dummy
+
+# List of additional names to consider as builtins
+additional-builtins=
+
+[TYPECHECK]
+# List of module names for which member attributes should not be checked
+ignored-modules=numpy,tensorflow,torch,cv2
+
+# List of classes names for which member attributes should not be checked
+ignored-classes=SQLObject
+
+# When zope mode is activated, add a predefined set of Zope acquired attributes
+# to generated-members
+zope=no
+
+[MISCELLANEOUS]
+# List of note tags to take into consideration
+notes=FIXME,XXX,TODO
+
+[IMPORTS]
+# Allow wildcard imports from modules that define __all__
+allow-wildcard-with-all=no
+
+# Analyse import fallback blocks
+analyse-fallback-blocks=no
+
+# Deprecated modules which should not be used
+deprecated-modules=regsub,TERMIOS,Bastion,rexec
+
+[DESIGN]
+# Maximum number of arguments for function / method
+max-args=5
+
+# Maximum number of locals for function / method body
+max-locals=15
+
+# Maximum number of return / yield for function / method body
+max-returns=6
+
+# Maximum number of branch for function / method body
+max-branches=12
+
+# Maximum number of statements in function / method body
+max-statements=50
+
+# Maximum number of parents for a class (see R0901)
+max-parents=7
+
+# Maximum number of attributes for a class (see R0902)
+max-attributes=7
+
+# Minimum number of public methods for a class (see R0903)
+min-public-methods=2
+
+# Maximum number of public methods for a class (see R0904)
+max-public-methods=20
+
+[CLASSES]
+# List of method names used to declare (i.e. assign) instance attributes
+defining-attr-methods=__init__,__new__,setUp
+
+# List of valid names for the first argument in a class method
+valid-classmethod-first-arg=cls
+
+# List of valid names for the first argument in a metaclass class method
+valid-metaclass-classmethod-first-arg=mcs
+
+[EXCEPTIONS]
+# Exceptions that will emit a warning when being caught
+overgeneral-exceptions=Exception
